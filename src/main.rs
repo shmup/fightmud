@@ -1,7 +1,7 @@
 mod mud;
 
-use mud::{player, world, server};
-
+use mud::{player, world};
+use mud::server::ServerFactory;
 use mud::player::Point;
 
 fn main() {
@@ -28,7 +28,11 @@ fn main() {
 
     world::World::new();
 
-    let server = server::ServerFactory::new();
+    let server = ServerFactory::new()
+        .ip("122.122.122.122")
+        .port(1337)
+        .start();
 
+    println!("{}", server.port);
     println!("{}", server.ip);
 }
