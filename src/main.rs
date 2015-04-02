@@ -17,14 +17,16 @@ fn main() {
     }
 
     match player.position {
-        Point { x: 1, y: y } => println!("no"),
-        Point { x: 0, y: y } => println!("yep"),
+        Point { x: 1, y: _ } => println!("no"),
+        Point { x: 0, y: _ } => println!("yep"),
         _ => println!("whatever"),
     }
 
     for l in player.name.chars() {
         println!("{}", l);
     }
+
+    println!("{} has {} item in inventory.", player.name, player.inventory.items.len());
 
     world::World::new();
 

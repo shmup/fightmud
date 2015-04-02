@@ -1,6 +1,3 @@
-use std::net::{TcpStream, TcpListener};
-use std::thread;
-
 struct Server {
     pub ip: &'static str,
     pub port: i32,
