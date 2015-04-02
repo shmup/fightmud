@@ -28,3 +28,20 @@ impl ServerFactory {
     }
 }
 
+#[test]
+fn custom_port_works() {
+    let server = ServerFactory::new() 
+        .port(1337)
+        .start();
+    
+    assert_eq!(server.port, 1337);
+}
+
+#[test]
+fn custom_ip_works() {
+    let server = ServerFactory::new() 
+        .ip("1.3.3.7")
+        .start();
+    
+    assert_eq!(server.ip, "1.3.3.7");
+}
