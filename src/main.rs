@@ -5,36 +5,10 @@ use mud::server::ServerFactory;
 use mud::player::Point;
 
 fn main() {
-    let player = player::Player::new();
-    player.attack();
-
-    let x = player.name.len();
-
-    match x {
-        e @ 1 ... 3 => println!("got a range of {}", e),
-        e @ 3 ... 4 => println!("hi got a range of {}", e),
-        _ => println!("more than that!"),
-    }
-
-    match player.position {
-        Point { x: 1, y: _ } => println!("no"),
-        Point { x: 0, y: _ } => println!("yep"),
-        _ => println!("whatever"),
-    }
-
-    for l in player.name.chars() {
-        println!("{}", l);
-    }
-
-    println!("{} has {} item in inventory.", player.name, player.inventory.items.len());
-
-    world::World::new();
-
     let server = ServerFactory::new()
         .ip("122.122.122.122")
         .port(1337)
-        .start();
+        .create();
 
-    println!("{}", server.port);
-    println!("{}", server.ip);
+    server.start();
 }

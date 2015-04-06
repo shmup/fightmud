@@ -1,7 +1,31 @@
+use std::net::{TcpListener, TcpStream};
+use std::thread;
+use std::io::prelude::*;
+use std::io::{BufWriter, BufReader};
+
 struct Server {
     pub ip: &'static str,
     pub port: i32,
 }
+
+impl Server {
+    pub fn start(&self) {
+        let listener = TcpListener::bind("127.0.0.1:1337").unwrap();
+
+        for stream in listener.incoming() {
+            match stream {
+                Ok(mut stream) => {
+                    handle_client(stream);
+                }
+                Err(e) => { println!("Connection failed"); }
+            }
+        }
+
+        drop(listener);
+    }
+}
+
+fn handle_client(mut stream: TcpStream) {}
 
 pub struct ServerFactory {
     pub ip: &'static str,
@@ -23,7 +47,7 @@ impl ServerFactory {
         self
     }
 
-    pub fn start(&self) -> Server {
+    pub fn create(&self) -> Server {
         Server { ip: self.ip, port: self.port }
     }
 }
@@ -32,8 +56,8 @@ impl ServerFactory {
 fn custom_port_works() {
     let server = ServerFactory::new() 
         .port(1337)
-        .start();
-    
+        .create();
+
     assert_eq!(server.port, 1337);
 }
 
@@ -41,7 +65,7 @@ fn custom_port_works() {
 fn custom_ip_works() {
     let server = ServerFactory::new() 
         .ip("1.3.3.7")
-        .start();
-    
+        .create();
+
     assert_eq!(server.ip, "1.3.3.7");
 }
