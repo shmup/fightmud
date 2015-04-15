@@ -1,35 +1,39 @@
-use std::net::{TcpListener, TcpStream};
-use std::thread;
 use std::io::prelude::*;
-use std::io::{BufWriter, BufReader};
+use std::net::{TcpListener, TcpStream};
 
 struct Server {
     pub ip: &'static str,
     pub port: i32,
+    pub clients: Vec<TcpStream>
 }
 
 impl Server {
-    pub fn start(&self) {
+    pub fn start(&mut self) {
         let listener = TcpListener::bind("127.0.0.1:1337").unwrap();
 
         for stream in listener.incoming() {
             match stream {
-                Ok(mut stream) => {
-                    handle_client(stream);
+                Ok(stream) => {
+                    self.handle_client(stream);
                 }
-                Err(e) => { println!("Connection failed"); }
+                Err(e) => { println!("Connection failed because {}", e); }
             }
         }
 
         drop(listener);
     }
-}
 
-fn handle_client(mut stream: TcpStream) {}
+    pub fn handle_client(&mut self, mut stream: TcpStream) {
+        stream.write(b"Hello\r\n").unwrap();
+        self.clients.push(stream);
+        println!("Hello client");
+    }
+
+}
 
 pub struct ServerFactory {
     pub ip: &'static str,
-    pub port: i32,
+    pub port: i32
 }
 
 impl ServerFactory {
@@ -48,7 +52,7 @@ impl ServerFactory {
     }
 
     pub fn create(&self) -> Server {
-        Server { ip: self.ip, port: self.port }
+        Server { ip: self.ip, port: self.port, clients: Vec::new() }
     }
 }
 
