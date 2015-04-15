@@ -1,10 +1,34 @@
 use std::io::prelude::*;
 use std::net::{TcpListener, TcpStream};
+use std::str::from_utf8;
+use std::thread;
+
+struct Player {
+    pub stream: TcpStream
+}
+
+impl Player {
+    pub fn new(stream: TcpStream) -> Player {
+        return Player {
+            stream: stream
+        }
+    }
+
+    pub fn read(&mut self) {
+        let mut buffer = [0u8; 512];
+        loop {
+            let usize = self.stream.read(&mut buffer).unwrap();
+            if usize == 0 {
+                break;
+            }
+            println!("{} {}", from_utf8(&buffer).unwrap(), usize);
+        }
+    }
+}
 
 struct Server {
     pub ip: &'static str,
     pub port: i32,
-    pub clients: Vec<TcpStream>
 }
 
 impl Server {
@@ -14,7 +38,7 @@ impl Server {
         for stream in listener.incoming() {
             match stream {
                 Ok(stream) => {
-                    self.handle_client(stream);
+                    self.handle_player(stream);
                 }
                 Err(e) => { println!("Connection failed because {}", e); }
             }
@@ -23,10 +47,12 @@ impl Server {
         drop(listener);
     }
 
-    pub fn handle_client(&mut self, mut stream: TcpStream) {
-        stream.write(b"Hello\r\n").unwrap();
-        self.clients.push(stream);
-        println!("Hello client");
+    pub fn handle_player(&mut self, mut stream: TcpStream) {
+        println!("Player connected");
+        thread::spawn(move || {
+            let mut player = Player::new(stream);
+            player.read();
+        });
     }
 
 }
@@ -52,7 +78,7 @@ impl ServerFactory {
     }
 
     pub fn create(&self) -> Server {
-        Server { ip: self.ip, port: self.port, clients: Vec::new() }
+        Server { ip: self.ip, port: self.port }
     }
 }
 
