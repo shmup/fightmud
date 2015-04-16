@@ -47,7 +47,7 @@ impl Server {
         drop(listener);
     }
 
-    pub fn handle_player(&mut self, mut stream: TcpStream) {
+    pub fn handle_player(&mut self, stream: TcpStream) {
         println!("Player connected");
         thread::spawn(move || {
             let mut player = Player::new(stream);
@@ -84,7 +84,7 @@ impl ServerFactory {
 
 #[test]
 fn custom_port_works() {
-    let server = ServerFactory::new() 
+    let server = ServerFactory::new()
         .port(1337)
         .create();
 
@@ -93,7 +93,7 @@ fn custom_port_works() {
 
 #[test]
 fn custom_ip_works() {
-    let server = ServerFactory::new() 
+    let server = ServerFactory::new()
         .ip("1.3.3.7")
         .create();
 
