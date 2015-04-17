@@ -1,4 +1,0 @@
-# Items
-
-    * armor
-    * healing
