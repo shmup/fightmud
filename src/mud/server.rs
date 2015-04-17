@@ -1,30 +1,6 @@
-use std::io::prelude::*;
 use std::net::{TcpListener, TcpStream};
-use std::str::from_utf8;
 use std::thread;
-
-struct Player {
-    pub stream: TcpStream
-}
-
-impl Player {
-    pub fn new(stream: TcpStream) -> Player {
-        return Player {
-            stream: stream
-        }
-    }
-
-    pub fn read(&mut self) {
-        let mut buffer = [0u8; 512];
-        loop {
-            let usize = self.stream.read(&mut buffer).unwrap();
-            if usize == 0 {
-                break;
-            }
-            println!("{} {}", from_utf8(&buffer).unwrap(), usize);
-        }
-    }
-}
+use mud::player::Player;
 
 struct Server {
     pub ip: &'static str,
